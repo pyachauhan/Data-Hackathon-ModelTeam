@@ -41,6 +41,8 @@ normalize <- function(x){
 }
 
 
+
+
 ####Model
 train <- read.csv(file = "~/Documents/Data-Hackathon-ModelTeam/data_normalised.csv"
                   ,header=TRUE,sep=",")
@@ -51,8 +53,10 @@ train_y <- train[train$y == 1,]
 
 combined <- rbind(train_s,train_y)
 rownames(combined) <- seq(length=nrow(combined))
+nrow(combined)
 
-to_csv('')
+#write.csv(combined,"~/Documents/Data-Hackathon-ModelTeam/random_samp.csv", row.names = FALSE)
+
 
 split <- sample(nrow(combined), 0.8*nrow(combined))
 train_m <- combined[split,]
@@ -75,10 +79,13 @@ predictions.logistic.binary.test <- ifelse(predictions.logistic.test > .5,"yes",
 con.mat.log.train <- prop.table(table(train_m$y,predictions.logistic.binary.train))
 con.mat.log.test <- prop.table(table(test_m$y,predictions.logistic.binary.test))
 
+
+summary(bank.logistic)
+
+####asklfjsdkfjgskdjf
 table(test_m$y,predictions.logistic.binary.test)
 
 
-1-((172+169)/(172+169+908+867))
 
 
 
@@ -139,19 +146,40 @@ df['unknown']<- ifelse(df$job == "unknown",1,0)
 df['divorced']<- ifelse(df$marital == "divorced",1,0)
 df['married']<- ifelse(df$marital == "married",1,0)
 df['single']<- ifelse(df$marital == "single",1,0)
-df['normage'] <- normalize(df$age)
+#df['normage'] <- normalize(df$age)
 
 df['dependent']<-ifelse(df$y == "yes",1,0)
-
 df['pdays_neg1'] <- ifelse(df$pdays <= -1,1,0)
-
 
 df['zero_previous'] <- ifelse(df$previous == 0,1,0)
 df['unknown_poutcome'] <- ifelse(df$poutcome == -1,1,0)
 
 
+df_1<- select(df,c('age','balance','day','duration','campaign','pdays','previous'))
+
+cormat <- round(cor(df_1),2)
+head(cormat)
+
+library(reshape2)
+melted_cormat <- melt(cormat)
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       space = "Lab", 
+                       name="Pearson\nCorrelation")
+
 #all independent var cortest
-df_cor <- df[,18:33]
+#df_cor <- df[,18:32]
 cortest <- data.frame(cor(df_cor, method="pearson",use="complete.obs"))
-view(cortest)
+view(cortest) 
+
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+ 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1))+
+  coord_fixed()
 
