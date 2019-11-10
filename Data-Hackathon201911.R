@@ -86,10 +86,6 @@ summary(bank.logistic)
 table(test_m$y,predictions.logistic.binary.test)
 
 
-
-
-
-
 # Display variable importance measures for a random forest model
 importance(forest, type=2)
 
